@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t vipinjain/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run vipinjain/react-test npm test -- --covarage
+
+after_success:
+  - docker build -t vipinjain/multi-client ./client
+  - docker build -t vipinjain/multi-nginx ./nginx
+  - docker build -t vipinjain/multi-server ./server
+  - docker build -t vipinjain/multi-worker ./worker
+  # Log in to the Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push vipinjain/multi-client
+  - docker push vipinjain/multi-nginx
+  - docker push vipinjain/multi-server
+  - docker push vipinjain/multi-worker
