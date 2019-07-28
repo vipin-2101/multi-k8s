@@ -6,7 +6,7 @@ before_install:
   - docker build -t vipinjain/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run vipinjain/react-test npm test -- --covarage
+  - docker run -e CI=true vipinjain/react-test npm test
 
 after_success:
   - docker build -t vipinjain/multi-client ./client
